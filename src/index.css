@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -96,6 +97,144 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-matrix-bg text-foreground overflow-hidden;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  /* Matrix Rain Effect */
+  .matrix-rain-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 0;
+  }
+
+  .matrix-character {
+    color: theme('colors.matrix.DEFAULT');
+    font-family: monospace;
+    font-size: 1.2rem;
+    line-height: 1;
+    position: absolute;
+    top: 0;
+    animation: matrix-rain linear infinite;
+    opacity: 0.8;
+  }
+
+  .matrix-character.bright {
+    color: theme('colors.matrix.light');
+    text-shadow: 0 0 5px theme('colors.matrix.light');
+    opacity: 1;
+  }
+
+  .logo-container {
+    position: relative;
+    z-index: 1;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: 0 0 20px theme('colors.matrix.light');
+  }
+
+  .call-button {
+    background: rgba(15, 155, 15, 0.2);
+    border: 2px solid theme('colors.matrix.light');
+    color: theme('colors.matrix.light');
+    font-weight: bold;
+    padding: 0.75rem 2rem;
+    border-radius: 2rem;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .call-button:hover {
+    background: rgba(15, 155, 15, 0.5);
+    box-shadow: 0 0 15px theme('colors.matrix.light');
+  }
+
+  .call-button:active {
+    transform: scale(0.98);
+  }
+
+  .header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: theme('colors.matrix.header');
+    color: white;
+    text-align: center;
+    padding: 1rem 0;
+    font-weight: bold;
+    z-index: 10;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  }
+
+  .footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: theme('colors.matrix.header');
+    color: white;
+    text-align: center;
+    padding: 0.75rem 0;
+    font-size: 0.9rem;
+    z-index: 10;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5);
+  }
+
+  .settings-icon {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    background-color: rgba(15, 155, 15, 0.2);
+    color: theme('colors.matrix.light');
+    border-radius: 50%;
+    padding: 0.5rem;
+    cursor: pointer;
+    z-index: 20;
+    transition: all 0.3s ease;
+  }
+
+  .settings-icon:hover {
+    background-color: rgba(15, 155, 15, 0.5);
+    transform: rotate(30deg);
+  }
+
+  .settings-panel {
+    position: fixed;
+    top: 0;
+    right: -350px;
+    width: 350px;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.95);
+    border-left: 2px solid theme('colors.matrix.DEFAULT');
+    z-index: 30;
+    padding: 2rem 1rem;
+    transition: right 0.3s ease;
+    overflow-y: auto;
+  }
+
+  .settings-panel.open {
+    right: 0;
+  }
+
+  .main-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    position: relative;
+    z-index: 2;
+    padding: 0 1rem;
   }
 }
