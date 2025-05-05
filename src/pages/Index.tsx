@@ -1,16 +1,12 @@
-
 import React from 'react';
 import MatrixRain from '../components/MatrixRain';
 import LogoContainer from '../components/LogoContainer';
 import CallButton from '../components/CallButton';
 import Settings from '../components/Settings';
-
 const Index = () => {
   // The sample logo URL, which will be replaced by the user's custom logo
   const logoUrl = '/lovable-uploads/042ee897-d450-4c1d-bb04-ed63826332b6.png';
-
-  return (
-    <div className="h-screen w-screen overflow-hidden relative">
+  return <div className="h-screen w-screen overflow-hidden relative">
       {/* Matrix Rain Background */}
       <MatrixRain />
       
@@ -20,7 +16,7 @@ const Index = () => {
       </header>
       
       {/* Main Content */}
-      <main className="main-content">
+      <main className="main-content bg-white">
         <LogoContainer imageSrc={logoUrl} />
         <CallButton />
       </main>
@@ -32,8 +28,6 @@ const Index = () => {
       
       {/* Settings Panel */}
       <Settings />
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
