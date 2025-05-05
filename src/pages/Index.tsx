@@ -11,7 +11,7 @@ const Index = () => {
   
   return (
     <div className="h-screen w-screen overflow-hidden relative bg-gradient-to-b from-white to-blue-50">
-      {/* Matrix Rain Background with lighter blue colors */}
+      {/* Matrix Rain Background with more visibility */}
       <MatrixRain />
       
       {/* Main Content */}

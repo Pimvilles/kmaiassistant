@@ -10,7 +10,7 @@ const MatrixRain: React.FC = () => {
     const container = containerRef.current;
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789$+-*/=%"\'#&_(),.;:?!\\|{}<>[]^~';
     const characterElements: HTMLElement[] = [];
-    const columns = Math.floor(window.innerWidth / 20);
+    const columns = Math.floor(window.innerWidth / 15); // More columns by reducing width
     
     const createRainDrop = () => {
       const column = Math.floor(Math.random() * columns);
@@ -21,19 +21,19 @@ const MatrixRain: React.FC = () => {
       element.className = 'matrix-character';
       
       // Make some characters brighter for effect
-      if (Math.random() < 0.15) {
+      if (Math.random() < 0.2) {
         element.classList.add('bright');
       }
       
-      // Set position
-      element.style.left = `${column * 20}px`;
+      // Set position with slight randomness
+      element.style.left = `${(column * 15) + (Math.random() * 5)}px`;
       
-      // Set random animation duration
-      const duration = 5 + Math.random() * 10;
+      // Set random animation duration - faster overall
+      const duration = 3 + Math.random() * 7;
       element.style.animationDuration = `${duration}s`;
       
       // Add some transparency for a lighter effect
-      element.style.opacity = (0.3 + Math.random() * 0.3).toString();
+      element.style.opacity = (0.6 + Math.random() * 0.4).toString();
       
       // Append to container
       container.appendChild(element);
@@ -51,15 +51,15 @@ const MatrixRain: React.FC = () => {
       }, duration * 1000);
     };
     
-    // Initial characters
-    for (let i = 0; i < 100; i++) {
-      setTimeout(createRainDrop, Math.random() * 3000);
+    // Initial characters - more of them
+    for (let i = 0; i < 150; i++) {
+      setTimeout(createRainDrop, Math.random() * 2000);
     }
     
-    // Continuous creation
+    // Continuous creation - more frequent
     const interval = setInterval(() => {
       createRainDrop();
-    }, 100);
+    }, 80);
     
     // Handle resize
     const handleResize = () => {
@@ -70,11 +70,11 @@ const MatrixRain: React.FC = () => {
       characterElements.length = 0;
       
       // Recalculate columns
-      const newColumns = Math.floor(window.innerWidth / 20);
+      const newColumns = Math.floor(window.innerWidth / 15);
       
       // Create new characters
-      for (let i = 0; i < 100; i++) {
-        setTimeout(createRainDrop, Math.random() * 3000);
+      for (let i = 0; i < 150; i++) {
+        setTimeout(createRainDrop, Math.random() * 2000);
       }
     };
     
@@ -91,7 +91,7 @@ const MatrixRain: React.FC = () => {
     };
   }, []);
   
-  return <div ref={containerRef} className="matrix-rain-container opacity-20" />;
+  return <div ref={containerRef} className="matrix-rain-container" />;
 };
 
 export default MatrixRain;

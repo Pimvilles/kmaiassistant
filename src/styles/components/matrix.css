@@ -11,23 +11,25 @@
 }
 
 .matrix-character {
-  color: theme('colors.blue.400');
+  color: theme('colors.blue.500');
   font-family: monospace;
   font-size: 1.2rem;
   line-height: 1;
   position: absolute;
   top: 0;
   animation: matrix-rain linear infinite;
-  opacity: 0.3;
+  opacity: 0.6;
+  font-weight: bold;
+  text-shadow: 0 0 3px theme('colors.blue.300');
 }
 
 .matrix-character.bright {
   color: theme('colors.blue.300');
-  text-shadow: 0 0 5px theme('colors.blue.300');
-  opacity: 0.7;
+  text-shadow: 0 0 8px theme('colors.blue.200');
+  opacity: 0.9;
 }
 
 @keyframes matrix-rain {
-  0% { transform: translateY(-100%); opacity: 0.3; }
+  0% { transform: translateY(-100%); opacity: 0.7; }
   100% { transform: translateY(1000%); opacity: 0; }
 }
