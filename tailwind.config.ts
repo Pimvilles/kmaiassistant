@@ -64,11 +64,11 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				matrix: {
-					DEFAULT: '#0F9B0F',
-					dark: '#003B00',
-					light: '#00FF41',
-					bg: '#000000',
-					header: '#121212'
+					DEFAULT: '#1E90FF',
+					dark: '#0066CC',
+					light: '#33CCFF',
+					bg: '#FFFFFF',
+					header: '#F8FAFC'
 				}
 			},
 			borderRadius: {
@@ -104,13 +104,22 @@ export default {
 					'50%': { 
 						boxShadow: '0 0 20px 5px rgba(0, 255, 65, 0.7)' 
 					}
+				},
+				'pulse-blue-glow': {
+					'0%, 100%': { 
+						boxShadow: '0 0 10px 3px rgba(59, 130, 246, 0.5)' 
+					},
+					'50%': { 
+						boxShadow: '0 0 25px 8px rgba(59, 130, 246, 0.7)' 
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'matrix-rain': 'matrix-rain 10s linear infinite',
-				'pulse-glow': 'pulse-glow 2s ease-in-out infinite'
+				'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
+				'pulse-blue-glow': 'pulse-blue-glow 3s ease-in-out infinite'
 			}
 		}
 	},

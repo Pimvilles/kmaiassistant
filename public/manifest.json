@@ -2,17 +2,22 @@
 {
   "name": "Kwena Boss A.I Assistant",
   "short_name": "Kwena AI",
-  "description": "An AI assistant with Matrix-style interface",
+  "description": "An AI assistant with futuristic interface",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#121212",
+  "background_color": "#ffffff",
+  "theme_color": "#3b82f6",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "favicon.ico",
-      "sizes": "64x64",
-      "type": "image/x-icon"
+      "src": "/lovable-uploads/76b42ff4-8327-424b-ae17-818df10c2c0d.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/lovable-uploads/76b42ff4-8327-424b-ae17-818df10c2c0d.png",
+      "sizes": "512x512",
+      "type": "image/png"
     }
   ]
 }

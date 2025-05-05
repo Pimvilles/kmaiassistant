@@ -32,6 +32,9 @@ const MatrixRain: React.FC = () => {
       const duration = 5 + Math.random() * 10;
       element.style.animationDuration = `${duration}s`;
       
+      // Add some transparency for a lighter effect
+      element.style.opacity = (0.3 + Math.random() * 0.3).toString();
+      
       // Append to container
       container.appendChild(element);
       characterElements.push(element);
@@ -88,7 +91,7 @@ const MatrixRain: React.FC = () => {
     };
   }, []);
   
-  return <div ref={containerRef} className="matrix-rain-container" />;
+  return <div ref={containerRef} className="matrix-rain-container opacity-20" />;
 };
 
 export default MatrixRain;

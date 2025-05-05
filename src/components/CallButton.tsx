@@ -1,13 +1,12 @@
+
 import React from 'react';
 import { useSettings } from '../contexts/SettingsContext';
 import { useToast } from '@/hooks/use-toast';
+
 const CallButton: React.FC = () => {
-  const {
-    webhookUrl
-  } = useSettings();
-  const {
-    toast
-  } = useToast();
+  const { webhookUrl } = useSettings();
+  const { toast } = useToast();
+  
   const handleCall = async () => {
     if (!webhookUrl) {
       toast({
@@ -17,11 +16,13 @@ const CallButton: React.FC = () => {
       });
       return;
     }
+    
     try {
       toast({
         title: "Calling Agent K",
         description: "Request sent to webhook..."
       });
+      
       const response = await fetch(webhookUrl, {
         method: 'POST',
         headers: {
@@ -32,6 +33,7 @@ const CallButton: React.FC = () => {
           action: 'call_agent'
         })
       });
+      
       if (response.ok) {
         toast({
           title: "Success",
@@ -49,8 +51,20 @@ const CallButton: React.FC = () => {
       });
     }
   };
-  return <button onClick={handleCall} className="call-button mt-8 text-blue-950">
-      Call Agent K
-    </button>;
+  
+  return (
+    <button 
+      onClick={handleCall} 
+      className="call-button relative group mt-8 px-8 py-3 bg-gradient-to-r from-blue-400 to-blue-500 text-white rounded-full font-semibold shadow-lg shadow-blue-300/30 hover:shadow-blue-400/40 transition-all duration-300 overflow-hidden z-10"
+    >
+      {/* Futuristic effect */}
+      <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-blue-300 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></span>
+      <span className="relative z-10 flex items-center justify-center">
+        <span className="mr-2">Call Agent K</span>
+        <span className="w-2 h-2 bg-blue-200 rounded-full animate-ping"></span>
+      </span>
+    </button>
+  );
 };
+
 export default CallButton;
