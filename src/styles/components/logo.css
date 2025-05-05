@@ -1,0 +1,22 @@
+
+.logo-container {
+  position: relative;
+  z-index: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+}
+
+/* Blue glowing animation for logo */
+@keyframes pulse-blue-glow {
+  0%, 100% { 
+    box-shadow: 0 0 10px 3px rgba(59, 130, 246, 0.5);
+  }
+  50% { 
+    box-shadow: 0 0 25px 8px rgba(59, 130, 246, 0.7);
+  }
+}
+
+.animate-pulse-blue-glow {
+  animation: pulse-blue-glow 3s ease-in-out infinite;
+}

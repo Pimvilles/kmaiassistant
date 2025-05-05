@@ -1,0 +1,15 @@
+
+/* Main CSS entry point - Imports all modular CSS files */
+
+/* Base styles and Tailwind directives */
+@import './base.css';
+
+/* Layout components */
+@import './layout/main.css';
+@import './layout/footer.css';
+
+/* UI Components */
+@import './components/matrix.css';
+@import './components/logo.css';
+@import './components/buttons.css';
+@import './components/settings.css';

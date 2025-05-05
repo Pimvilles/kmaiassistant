@@ -1,0 +1,22 @@
+
+.call-button {
+  background: linear-gradient(to right, #3b82f6, #60a5fa);
+  color: white;
+  font-weight: bold;
+  padding: 0.75rem 2rem;
+  border-radius: 0.75rem;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+}
+
+.call-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px -3px rgba(59, 130, 246, 0.4);
+}
+
+.call-button:active {
+  transform: translateY(1px);
+}
