@@ -1,12 +1,13 @@
-
 import React from 'react';
 import { useSettings } from '../contexts/SettingsContext';
 import { useToast } from '@/hooks/use-toast';
-
 const CallButton: React.FC = () => {
-  const { webhookUrl } = useSettings();
-  const { toast } = useToast();
-  
+  const {
+    webhookUrl
+  } = useSettings();
+  const {
+    toast
+  } = useToast();
   const handleCall = async () => {
     if (!webhookUrl) {
       toast({
@@ -16,28 +17,25 @@ const CallButton: React.FC = () => {
       });
       return;
     }
-    
     try {
       toast({
         title: "Calling Agent K",
-        description: "Request sent to webhook...",
+        description: "Request sent to webhook..."
       });
-      
       const response = await fetch(webhookUrl, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           timestamp: new Date().toISOString(),
-          action: 'call_agent',
-        }),
+          action: 'call_agent'
+        })
       });
-      
       if (response.ok) {
         toast({
           title: "Success",
-          description: "Agent K has been contacted",
+          description: "Agent K has been contacted"
         });
       } else {
         throw new Error(`HTTP error ${response.status}`);
@@ -51,15 +49,8 @@ const CallButton: React.FC = () => {
       });
     }
   };
-  
-  return (
-    <button 
-      className="call-button mt-8"
-      onClick={handleCall}
-    >
+  return <button onClick={handleCall} className="call-button mt-8 text-blue-950">
       Call Agent K
-    </button>
-  );
+    </button>;
 };
-
 export default CallButton;
