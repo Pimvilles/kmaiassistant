@@ -3,9 +3,11 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 
 // Define the Vapi API key
 const VAPI_API_KEY = "b0db1376-81d3-4b45-946a-7a79c57aa6d1";
+const CHATBOT_SSE_URL = "https://mcp.zapier.com/api/mcp/s/MDBmNjI4M2YtOTJhNy00Yjg4LWEzMTUtYWEzZjg2YmQ3MDUyOjYzNGFjYWE2LTQ0MDctNDNkMi1hNjI0LWRiOGUzZDNjZWFmNQ==/sse";
 
 interface VapiContextType {
   apiKey: string;
+  sseUrl: string;
   showCallPage: boolean;
   setShowCallPage: (show: boolean) => void;
 }
@@ -31,6 +33,7 @@ export const VapiProvider: React.FC<VapiProviderProps> = ({ children }) => {
     <VapiContext.Provider 
       value={{ 
         apiKey: VAPI_API_KEY,
+        sseUrl: CHATBOT_SSE_URL,
         showCallPage,
         setShowCallPage
       }}

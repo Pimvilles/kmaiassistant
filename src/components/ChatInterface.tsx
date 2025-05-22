@@ -4,6 +4,7 @@ import { useVapi } from '../contexts/VapiContext';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
+import CallButton from './CallButton';
 
 interface Message {
   id: string;
@@ -13,7 +14,7 @@ interface Message {
 }
 
 const ChatInterface: React.FC = () => {
-  const { apiKey, setShowCallPage } = useVapi();
+  const { apiKey, sseUrl, setShowCallPage } = useVapi();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -26,11 +27,21 @@ const ChatInterface: React.FC = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+  const eventSourceRef = useRef<EventSource | null>(null);
   
   // Auto-scroll to bottom of messages
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+  
+  // Clean up EventSource on unmount
+  useEffect(() => {
+    return () => {
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close();
+      }
+    };
+  }, []);
   
   const handleSendMessage = async () => {
     if (!input.trim()) return;
@@ -48,19 +59,51 @@ const ChatInterface: React.FC = () => {
     setIsProcessing(true);
     
     try {
-      // Mock API response for now
-      // In a real implementation, you would call the Vapi API here
-      setTimeout(() => {
-        const aiResponse: Message = {
-          id: (Date.now() + 1).toString(),
-          content: `I'm processing your request: "${input.trim()}"`,
-          sender: 'ai',
-          timestamp: new Date()
-        };
-        
-        setMessages(prev => [...prev, aiResponse]);
+      // Connect to the provided SSE URL with the message
+      const encodedMessage = encodeURIComponent(input.trim());
+      const url = `${sseUrl}?message=${encodedMessage}`;
+      
+      // Close any existing connection
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close();
+      }
+      
+      // Create new SSE connection
+      const eventSource = new EventSource(url);
+      eventSourceRef.current = eventSource;
+      
+      eventSource.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          if (data.message) {
+            const aiResponse: Message = {
+              id: (Date.now() + 1).toString(),
+              content: data.message,
+              sender: 'ai',
+              timestamp: new Date()
+            };
+            
+            setMessages(prev => [...prev, aiResponse]);
+            setIsProcessing(false);
+            eventSource.close();
+            eventSourceRef.current = null;
+          }
+        } catch (error) {
+          console.error('Error parsing SSE message:', error);
+        }
+      };
+      
+      eventSource.onerror = () => {
+        // Handle error
+        toast({
+          title: "Error",
+          description: "Failed to connect to chatbot. Please try again.",
+          variant: "destructive"
+        });
         setIsProcessing(false);
-      }, 1000);
+        eventSource.close();
+        eventSourceRef.current = null;
+      };
       
     } catch (error) {
       console.error('Error sending message:', error);
@@ -71,10 +114,6 @@ const ChatInterface: React.FC = () => {
       });
       setIsProcessing(false);
     }
-  };
-  
-  const handleCallAgent = () => {
-    setShowCallPage(true);
   };
   
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -93,12 +132,7 @@ const ChatInterface: React.FC = () => {
             Hello, KM A.I
           </span>
         </div>
-        <Button 
-          onClick={handleCallAgent}
-          className="bg-gradient-to-r from-blue-400 to-blue-500 text-white rounded-lg hover:shadow-lg transition-all"
-        >
-          Call Agent K
-        </Button>
+        <CallButton />
       </header>
       
       {/* Chat Messages Area */}
@@ -161,6 +195,11 @@ const ChatInterface: React.FC = () => {
           </Button>
         </div>
       </div>
+      
+      {/* Footer */}
+      <footer className="footer">
+        <p className="text-blue-600">Powered By: Kwena Moloto A.I Solutions</p>
+      </footer>
     </div>
   );
 };

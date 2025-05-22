@@ -3,9 +3,10 @@ import React, { useState } from 'react';
 
 interface LogoContainerProps {
   imageSrc: string;
+  className?: string;
 }
 
-const LogoContainer: React.FC<LogoContainerProps> = ({ imageSrc }) => {
+const LogoContainer: React.FC<LogoContainerProps> = ({ imageSrc, className = "" }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   
   const handleImageLoad = () => {
@@ -13,7 +14,7 @@ const LogoContainer: React.FC<LogoContainerProps> = ({ imageSrc }) => {
   };
   
   return (
-    <div className="logo-container w-64 h-64 md:w-80 md:h-80 animate-pulse-blue-glow rounded-full relative">
+    <div className={`logo-container animate-pulse-blue-glow rounded-full relative ${className}`}>
       {!imageLoaded && (
         <div className="w-full h-full flex items-center justify-center bg-white/50 rounded-full">
           <div className="text-blue-500">Loading...</div>

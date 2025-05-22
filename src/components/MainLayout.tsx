@@ -8,7 +8,7 @@ const MainLayout: React.FC = () => {
   const { showCallPage } = useVapi();
   
   return (
-    <div>
+    <div className="h-screen w-screen overflow-hidden">
       {showCallPage ? <Index /> : <ChatInterface />}
     </div>
   );

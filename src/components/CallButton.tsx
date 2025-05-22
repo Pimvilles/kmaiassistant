@@ -2,10 +2,14 @@
 import React from 'react';
 import { useVapi } from '../contexts/VapiContext';
 import { useToast } from '@/hooks/use-toast';
+import LogoContainer from './LogoContainer';
 
 const CallButton: React.FC = () => {
   const { apiKey, setShowCallPage } = useVapi();
   const { toast } = useToast();
+  
+  // Using the uploaded image for the logo
+  const logoUrl = '/lovable-uploads/76b42ff4-8327-424b-ae17-818df10c2c0d.png';
   
   const handleCall = async () => {
     try {
@@ -14,8 +18,22 @@ const CallButton: React.FC = () => {
         description: "Initiating voice call..."
       });
       
-      // In a real implementation, this is where you would call the Vapi API
-      // For now, we'll just show a success message
+      // Implement actual Vapi API call
+      const response = await fetch('https://api.vapi.ai/call/agent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          agent_id: 'agent_k',
+          // Add any additional parameters required by the Vapi API
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to connect to Agent K');
+      }
       
       toast({
         title: "Success",
@@ -38,17 +56,14 @@ const CallButton: React.FC = () => {
   };
   
   return (
-    <button 
+    <div 
       onClick={handleCall} 
-      className="call-button relative group mt-8 px-8 py-3 bg-gradient-to-r from-blue-400 to-blue-500 text-white rounded-full font-semibold shadow-lg shadow-blue-300/30 hover:shadow-blue-400/40 transition-all duration-300 overflow-hidden z-10"
+      className="cursor-pointer hover:scale-105 transition-transform duration-300"
     >
-      {/* Futuristic effect */}
-      <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-blue-300 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></span>
-      <span className="relative z-10 flex items-center justify-center">
-        <span className="mr-2">Call Agent K</span>
-        <span className="w-2 h-2 bg-blue-200 rounded-full animate-ping"></span>
-      </span>
-    </button>
+      <div className="w-16 h-16 sm:w-20 sm:h-20">
+        <LogoContainer imageSrc={logoUrl} />
+      </div>
+    </div>
   );
 };
 
