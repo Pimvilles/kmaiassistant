@@ -5,21 +5,16 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import CallButton from './CallButton';
-import { Phone, Mic, MicOff, MessageCircle } from 'lucide-react';
 
 interface Message {
   id: string;
   content: string;
   sender: 'user' | 'ai';
   timestamp: Date;
-  actionResult?: {
-    action: string;
-    result: string;
-  };
 }
 
 const ChatInterface: React.FC = () => {
-  const { apiKey, sseUrl, setShowCallPage, startVoiceChat, isVoiceChatActive, voiceTranscript } = useVapi();
+  const { apiKey, sseUrl, setShowCallPage } = useVapi();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -33,36 +28,6 @@ const ChatInterface: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const eventSourceRef = useRef<EventSource | null>(null);
-  const [interaction, setInteraction] = useState<'text' | 'voice'>('text');
-  
-  // Add voice transcript to messages when updated
-  useEffect(() => {
-    if (voiceTranscript && interaction === 'voice') {
-      // Look for a user message with "voice transcript" tag
-      const existingTranscriptIndex = messages.findIndex(
-        msg => msg.sender === 'user' && msg.id.includes('voice-transcript')
-      );
-      
-      if (existingTranscriptIndex >= 0) {
-        // Update existing transcript message
-        const updatedMessages = [...messages];
-        updatedMessages[existingTranscriptIndex] = {
-          ...updatedMessages[existingTranscriptIndex],
-          content: voiceTranscript
-        };
-        setMessages(updatedMessages);
-      } else {
-        // Add new transcript message
-        const transcriptMessage: Message = {
-          id: `voice-transcript-${Date.now()}`,
-          content: voiceTranscript,
-          sender: 'user',
-          timestamp: new Date()
-        };
-        setMessages(prev => [...prev, transcriptMessage]);
-      }
-    }
-  }, [voiceTranscript, interaction]);
   
   // Auto-scroll to bottom of messages
   useEffect(() => {
@@ -110,31 +75,18 @@ const ChatInterface: React.FC = () => {
       eventSource.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
-          console.log("SSE data received:", data);
-          
           if (data.message) {
             const aiResponse: Message = {
               id: (Date.now() + 1).toString(),
               content: data.message,
               sender: 'ai',
-              timestamp: new Date(),
-              // Add action result if available
-              actionResult: data.action ? {
-                action: data.action.name || "Action",
-                result: data.action.result || "Completed"
-              } : undefined
+              timestamp: new Date()
             };
             
             setMessages(prev => [...prev, aiResponse]);
             setIsProcessing(false);
             eventSource.close();
             eventSourceRef.current = null;
-            
-            // Log the interaction
-            logInteraction("text_chat", {
-              user_message: input.trim(),
-              ai_response: data.message
-            });
           }
         } catch (error) {
           console.error('Error parsing SSE message:', error);
@@ -164,27 +116,11 @@ const ChatInterface: React.FC = () => {
     }
   };
   
-  // Log user interactions
-  const logInteraction = (type: string, data: any) => {
-    console.log(`[LOG] ${type}:`, data);
-    // In a real implementation, you might send this to a logging service
-  };
-  
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
     }
-  };
-  
-  const handleVoiceChat = () => {
-    setInteraction('voice');
-    startVoiceChat(); 
-    
-    // Log the voice chat start
-    logInteraction("voice_chat_start", {
-      timestamp: new Date().toISOString()
-    });
   };
   
   return (
@@ -196,26 +132,7 @@ const ChatInterface: React.FC = () => {
             Hello, KM A.I
           </span>
         </div>
-        <div className="flex space-x-2">
-          <Button 
-            variant="outline" 
-            size="icon" 
-            onClick={() => setInteraction('text')}
-            className={`${interaction === 'text' ? 'bg-blue-600' : 'bg-gray-800'}`}
-            title="Text Chat"
-          >
-            <MessageCircle className="h-4 w-4" />
-          </Button>
-          <Button 
-            variant="outline" 
-            size="icon"
-            onClick={handleVoiceChat}
-            className={`${interaction === 'voice' ? 'bg-blue-600' : 'bg-gray-800'}`}
-            title="Voice Chat"
-          >
-            {isVoiceChatActive ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
-          </Button>
-        </div>
+        <CallButton />
       </header>
       
       {/* Chat Messages Area */}
@@ -233,12 +150,6 @@ const ChatInterface: React.FC = () => {
               }`}
             >
               {message.content}
-              {message.actionResult && (
-                <div className="mt-2 p-2 bg-gray-700 rounded-md text-sm">
-                  <p className="font-semibold">{message.actionResult.action}</p>
-                  <p>{message.actionResult.result}</p>
-                </div>
-              )}
               <div className={`text-xs mt-1 ${
                 message.sender === 'user' ? 'text-blue-200' : 'text-gray-400'
               }`}>
@@ -271,11 +182,10 @@ const ChatInterface: React.FC = () => {
             placeholder="Enter a prompt here"
             className="flex-1 bg-gray-800 border-gray-700 focus:border-blue-500 text-white resize-none"
             rows={1}
-            disabled={interaction === 'voice'}
           />
           <Button
             onClick={handleSendMessage}
-            disabled={isProcessing || !input.trim() || interaction === 'voice'}
+            disabled={isProcessing || !input.trim()}
             className="bg-blue-500 hover:bg-blue-600"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -287,8 +197,8 @@ const ChatInterface: React.FC = () => {
       </div>
       
       {/* Footer */}
-      <footer className="p-2 text-center border-t border-gray-800">
-        <p className="text-blue-600 text-sm">Powered By: Kwena Moloto A.I Solutions</p>
+      <footer className="footer">
+        <p className="text-blue-600">Powered By: Kwena Moloto A.I Solutions</p>
       </footer>
     </div>
   );

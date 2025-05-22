@@ -10,10 +10,6 @@ interface VapiContextType {
   sseUrl: string;
   showCallPage: boolean;
   setShowCallPage: (show: boolean) => void;
-  startVoiceChat: () => void;
-  endVoiceChat: () => void;
-  isVoiceChatActive: boolean;
-  voiceTranscript: string;
 }
 
 const VapiContext = createContext<VapiContextType | undefined>(undefined);
@@ -32,79 +28,6 @@ interface VapiProviderProps {
 
 export const VapiProvider: React.FC<VapiProviderProps> = ({ children }) => {
   const [showCallPage, setShowCallPage] = useState<boolean>(false);
-  const [isVoiceChatActive, setIsVoiceChatActive] = useState<boolean>(false);
-  const [voiceTranscript, setVoiceTranscript] = useState<string>('');
-  
-  // Load Vapi SDK script
-  useEffect(() => {
-    const loadVapiSDK = async () => {
-      try {
-        // Check if script is already loaded
-        if (!document.getElementById('vapi-sdk')) {
-          const script = document.createElement('script');
-          script.id = 'vapi-sdk';
-          script.src = 'https://cdn.vapi.ai/web-sdk.js';
-          script.async = true;
-          script.onload = () => {
-            console.log('Vapi SDK loaded successfully');
-          };
-          document.head.appendChild(script);
-        }
-      } catch (error) {
-        console.error('Error loading Vapi SDK:', error);
-      }
-    };
-
-    loadVapiSDK();
-  }, []);
-
-  // Start voice chat session
-  const startVoiceChat = () => {
-    setShowCallPage(true);
-    setIsVoiceChatActive(true);
-    
-    // Initialize Vapi if window.vapi exists
-    if (typeof window !== 'undefined' && window.vapi) {
-      try {
-        window.vapi.init({ 
-          apiKey: VAPI_API_KEY, 
-          options: {
-            // Configure Vapi options
-            transcriptStreaming: true,
-            autoStart: true,
-          }
-        });
-
-        // Handle transcript updates
-        window.vapi.onTranscript((transcript) => {
-          setVoiceTranscript(transcript);
-          console.log('Transcript:', transcript);
-        });
-
-        // Start the conversation
-        window.vapi.start();
-
-      } catch (error) {
-        console.error('Error initializing Vapi:', error);
-      }
-    } else {
-      console.error('Vapi SDK not loaded or not available');
-    }
-  };
-
-  // End voice chat session
-  const endVoiceChat = () => {
-    if (typeof window !== 'undefined' && window.vapi) {
-      try {
-        window.vapi.stop();
-      } catch (error) {
-        console.error('Error stopping Vapi:', error);
-      }
-    }
-    setShowCallPage(false);
-    setIsVoiceChatActive(false);
-    setVoiceTranscript('');
-  };
   
   return (
     <VapiContext.Provider 
@@ -112,11 +35,7 @@ export const VapiProvider: React.FC<VapiProviderProps> = ({ children }) => {
         apiKey: VAPI_API_KEY,
         sseUrl: CHATBOT_SSE_URL,
         showCallPage,
-        setShowCallPage,
-        startVoiceChat,
-        endVoiceChat,
-        isVoiceChatActive,
-        voiceTranscript
+        setShowCallPage
       }}
     >
       {children}
