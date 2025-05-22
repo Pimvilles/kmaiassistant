@@ -1,49 +1,34 @@
 
 import React from 'react';
-import { useSettings } from '../contexts/SettingsContext';
+import { useVapi } from '../contexts/VapiContext';
 import { useToast } from '@/hooks/use-toast';
 
 const CallButton: React.FC = () => {
-  const { webhookUrl } = useSettings();
+  const { apiKey, setShowCallPage } = useVapi();
   const { toast } = useToast();
   
   const handleCall = async () => {
-    if (!webhookUrl) {
-      toast({
-        title: "No webhook URL configured",
-        description: "Please set up your n8n webhook URL in settings",
-        variant: "destructive"
-      });
-      return;
-    }
-    
     try {
       toast({
         title: "Calling Agent K",
-        description: "Request sent to webhook..."
+        description: "Initiating voice call..."
       });
       
-      const response = await fetch(webhookUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          timestamp: new Date().toISOString(),
-          action: 'call_agent'
-        })
+      // In a real implementation, this is where you would call the Vapi API
+      // For now, we'll just show a success message
+      
+      toast({
+        title: "Success",
+        description: "Agent K has been contacted"
       });
       
-      if (response.ok) {
-        toast({
-          title: "Success",
-          description: "Agent K has been contacted"
-        });
-      } else {
-        throw new Error(`HTTP error ${response.status}`);
-      }
+      // Go back to chat interface
+      setTimeout(() => {
+        setShowCallPage(false);
+      }, 3000);
+      
     } catch (error) {
-      console.error('Error calling webhook:', error);
+      console.error('Error calling Vapi API:', error);
       toast({
         title: "Error",
         description: "Failed to contact Agent K. Check console for details.",

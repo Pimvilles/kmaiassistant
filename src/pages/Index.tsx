@@ -3,7 +3,6 @@ import React from 'react';
 import MatrixRain from '../components/MatrixRain';
 import LogoContainer from '../components/LogoContainer';
 import CallButton from '../components/CallButton';
-import Settings from '../components/Settings';
 
 const Index = () => {
   // Using the uploaded image for the logo
@@ -30,9 +29,6 @@ const Index = () => {
       <footer className="footer">
         <p className="text-blue-600">Powered By: Kwena Moloto A.I Solutions</p>
       </footer>
-      
-      {/* Settings Panel */}
-      <Settings />
     </div>
   );
 };

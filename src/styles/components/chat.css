@@ -1,0 +1,121 @@
+
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: theme('colors.gray.900');
+  color: theme('colors.white');
+}
+
+.message-container {
+  display: flex;
+  margin-bottom: 1rem;
+}
+
+.message-container.user {
+  justify-content: flex-end;
+}
+
+.message-container.ai {
+  justify-content: flex-start;
+}
+
+.message-bubble {
+  max-width: 75%;
+  padding: 0.75rem 1rem;
+  border-radius: 1rem;
+}
+
+.message-bubble.user {
+  background-color: theme('colors.blue.600');
+  color: theme('colors.white');
+  border-bottom-right-radius: 0.25rem;
+}
+
+.message-bubble.ai {
+  background-color: theme('colors.gray.800');
+  color: theme('colors.gray.100');
+  border-bottom-left-radius: 0.25rem;
+}
+
+.message-time {
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.message-time.user {
+  color: theme('colors.blue.200');
+}
+
+.message-time.ai {
+  color: theme('colors.gray.400');
+}
+
+.typing-indicator {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.typing-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background-color: theme('colors.blue.400');
+  animation: typing-animation 1.5s infinite;
+}
+
+.typing-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typing-animation {
+  0%, 60%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-0.25rem); }
+}
+
+.chat-input-container {
+  display: flex;
+  padding: 1rem;
+  gap: 0.5rem;
+  border-top: 1px solid theme('colors.gray.800');
+}
+
+.chat-input {
+  flex: 1;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  background-color: theme('colors.gray.800');
+  color: theme('colors.white');
+  border: 1px solid theme('colors.gray.700');
+  resize: none;
+}
+
+.chat-input:focus {
+  border-color: theme('colors.blue.500');
+  outline: none;
+}
+
+.chat-send-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: theme('colors.blue.500');
+  color: theme('colors.white');
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.chat-send-button:hover {
+  background-color: theme('colors.blue.600');
+}
+
+.chat-send-button:disabled {
+  background-color: theme('colors.gray.700');
+  cursor: not-allowed;
+}
