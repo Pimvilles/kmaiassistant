@@ -27,12 +27,12 @@ const LogoContainer: React.FC<LogoContainerProps> = ({ imageSrc, className = "" 
         onLoad={handleImageLoad}
       />
       
-      {/* Futuristic decorative elements */}
+      {/* Blue futuristic decorative elements */}
       <div className="absolute inset-0 border-2 border-blue-400/30 rounded-full -m-1"></div>
       <div className="absolute inset-0 border border-blue-300/20 rounded-full -m-2"></div>
       <div className="absolute inset-0 border border-blue-200/10 rounded-full -m-3"></div>
       
-      {/* Tech circuit lines */}
+      {/* Blue tech circuit lines */}
       <div className="absolute top-0 left-1/2 h-8 w-px bg-gradient-to-b from-blue-400 to-transparent -translate-x-1/2 -translate-y-full opacity-60"></div>
       <div className="absolute bottom-0 left-1/2 h-8 w-px bg-gradient-to-t from-blue-400 to-transparent -translate-x-1/2 translate-y-full opacity-60"></div>
       <div className="absolute left-0 top-1/2 w-8 h-px bg-gradient-to-r from-blue-400 to-transparent -translate-y-1/2 -translate-x-full opacity-60"></div>

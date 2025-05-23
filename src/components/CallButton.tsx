@@ -55,8 +55,10 @@ const CallButton: React.FC = () => {
       onClick={handleCall} 
       className="cursor-pointer hover:scale-105 transition-transform duration-300"
     >
-      <div className="w-16 h-16 sm:w-20 sm:h-20">
+      <div className="w-16 h-16 sm:w-20 sm:h-20 relative">
         <LogoContainer imageSrc={logoUrl} />
+        {/* Blue glow overlay for call button indication */}
+        <div className="absolute inset-0 rounded-full bg-blue-500/20 animate-pulse-blue-glow"></div>
       </div>
     </div>
   );
