@@ -1,11 +1,15 @@
 
 import React from 'react';
-import { useVapi } from '../contexts/VapiContext';
 import { useToast } from '@/hooks/use-toast';
 import LogoContainer from './LogoContainer';
 
+declare global {
+  interface Window {
+    vapiInstance: any;
+  }
+}
+
 const CallButton: React.FC = () => {
-  const { apiKey, setShowCallPage } = useVapi();
   const { toast } = useToast();
   
   // Using the uploaded image for the logo
@@ -13,43 +17,34 @@ const CallButton: React.FC = () => {
   
   const handleCall = async () => {
     try {
+      // Check if vapiInstance is available
+      if (!window.vapiInstance) {
+        toast({
+          title: "Error",
+          description: "Voice agent not initialized. Please refresh the page and try again.",
+          variant: "destructive"
+        });
+        return;
+      }
+
       toast({
         title: "Calling Agent K",
         description: "Initiating voice call..."
       });
       
-      // Implement actual Vapi API call
-      const response = await fetch('https://api.vapi.ai/call/agent', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`
-        },
-        body: JSON.stringify({
-          agent_id: 'agent_k',
-          // Add any additional parameters required by the Vapi API
-        })
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to connect to Agent K');
-      }
+      // Use the vapiInstance to start the call
+      await window.vapiInstance.start();
       
       toast({
         title: "Success",
-        description: "Agent K has been contacted"
+        description: "Agent K call initiated successfully"
       });
       
-      // Go back to chat interface
-      setTimeout(() => {
-        setShowCallPage(false);
-      }, 3000);
-      
     } catch (error) {
-      console.error('Error calling Vapi API:', error);
+      console.error('Error calling Vapi:', error);
       toast({
         title: "Error",
-        description: "Failed to contact Agent K. Check console for details.",
+        description: "Failed to contact Agent K. Please try again.",
         variant: "destructive"
       });
     }
