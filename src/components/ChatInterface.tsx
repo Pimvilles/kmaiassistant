@@ -33,6 +33,35 @@ const ChatInterface: React.FC = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  const sendToolRequest = async (tool: string, action: string, parameters: any) => {
+    try {
+      console.log('Sending tool request:', { tool, action, parameters });
+      
+      const response = await fetch('https://zapier-kmaisolutions.vercel.app/api/proxy-to-zapier', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          tool,
+          action,
+          parameters
+        }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Tool response:', result);
+        return result;
+      } else {
+        throw new Error(`Tool request failed with status: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('Error sending tool request:', error);
+      throw error;
+    }
+  };
+
   const handleSendMessage = async (messageContent: string) => {
     // Add user message
     const userMessage: Message = {
@@ -46,6 +75,7 @@ const ChatInterface: React.FC = () => {
     setIsProcessing(true);
     
     try {
+      // Send to MCP endpoint with context
       const response = await fetch('https://mcp.zapier.com/api/mcp/s/MDBmNjI4M2YtOTJhNy00Yjg4LWEzMTUtYWEzZjg2YmQ3MDUyOjMxNThmZmQ3LWZlY2EtNGE5YS04MjkzLWU0N2YzOTQ5ZGZkYQ==/mcp', {
         method: 'POST',
         headers: {
@@ -64,7 +94,8 @@ const ChatInterface: React.FC = () => {
               year: 'numeric', 
               month: 'long', 
               day: 'numeric' 
-            })
+            }),
+            proxy_endpoint: 'https://zapier-kmaisolutions.vercel.app/api/proxy-to-zapier'
           }
         }),
       });
@@ -83,19 +114,42 @@ const ChatInterface: React.FC = () => {
           const data = JSON.parse(responseText);
           console.log('Parsed JSON response:', data);
           
-          // Extract response from various possible JSON structures
-          if (data.response) {
-            responseContent = data.response;
-          } else if (data.message) {
-            responseContent = data.message;
-          } else if (data.reply) {
-            responseContent = data.reply;
-          } else if (data.text) {
-            responseContent = data.text;
-          } else if (data.content) {
-            responseContent = data.content;
-          } else if (typeof data === 'string') {
-            responseContent = data;
+          // Check if this is a tool request
+          if (data.tool_request) {
+            console.log('Tool request detected:', data.tool_request);
+            
+            try {
+              const toolResult = await sendToolRequest(
+                data.tool_request.tool,
+                data.tool_request.action,
+                data.tool_request.parameters
+              );
+              
+              // Include tool result in the response
+              responseContent = data.response || data.message || 'Task completed successfully!';
+              if (toolResult && typeof toolResult === 'object') {
+                responseContent += `\n\n✅ Tool Result: ${JSON.stringify(toolResult, null, 2)}`;
+              }
+            } catch (toolError) {
+              console.error('Tool execution failed:', toolError);
+              responseContent = data.response || data.message || 'I tried to complete your task, but ran into some technical difficulties, Boss!';
+              responseContent += '\n\n❌ Tool execution failed. Please try again later.';
+            }
+          } else {
+            // Regular response without tool usage
+            if (data.response) {
+              responseContent = data.response;
+            } else if (data.message) {
+              responseContent = data.message;
+            } else if (data.reply) {
+              responseContent = data.reply;
+            } else if (data.text) {
+              responseContent = data.text;
+            } else if (data.content) {
+              responseContent = data.content;
+            } else if (typeof data === 'string') {
+              responseContent = data;
+            }
           }
         } catch (jsonError) {
           // If JSON parsing fails, use the raw text as the response
