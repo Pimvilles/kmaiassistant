@@ -31,6 +31,29 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isProcessing }) =>
     }
   };
 
+  const sendVoiceToWebhook = async (audioBlob: Blob) => {
+    try {
+      const formData = new FormData();
+      formData.append('voice_note', audioBlob, 'voice_note.wav');
+      formData.append('timestamp', new Date().toISOString());
+      formData.append('type', 'voice_note');
+
+      await fetch('http://localhost:5678/webhook-test/f69ee3da-efaa-4274-a8cc-ea16b1b5f41d', {
+        method: 'POST',
+        body: formData,
+      });
+
+      onSendMessage('🎤 Voice message sent');
+    } catch (error) {
+      console.error('Error sending voice note:', error);
+      toast({
+        title: "Error",
+        description: "Failed to send voice note to webhook.",
+        variant: "destructive"
+      });
+    }
+  };
+
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -44,17 +67,16 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isProcessing }) =>
 
       mediaRecorder.onstop = () => {
         const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
-        const audioUrl = URL.createObjectURL(audioBlob);
         
         // Close all tracks of the stream
         stream.getTracks().forEach(track => track.stop());
         
-        // In a real app, you'd send this to your backend for processing
-        onSendMessage(`🎤 Voice message sent`);
+        // Send voice note to webhook
+        sendVoiceToWebhook(audioBlob);
         
         toast({
           title: "Voice note recorded",
-          description: "Voice note successfully recorded.",
+          description: "Voice note successfully recorded and sent.",
         });
         
         setIsRecording(false);
@@ -140,7 +162,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isProcessing }) =>
         />
         <Button
           onClick={handleVoiceButton}
-          className={`${isRecording ? 'bg-red-600 hover:bg-red-700' : 'bg-gray-800 hover:bg-gray-700'} text-white`}
+          className={`${isRecording ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700'} text-white`}
           title={isRecording ? "Stop recording" : "Record voice message"}
         >
           <Mic className="h-5 w-5" />

@@ -15,11 +15,11 @@ interface Message {
 }
 
 const ChatInterface: React.FC = () => {
-  const { apiKey, sseUrl } = useVapi();
+  const { apiKey } = useVapi();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      content: 'Hello, I am KM A.I. How can I assist you today?',
+      content: 'Hello, Mr Moloto! How can I assist you today?',
       sender: 'ai',
       timestamp: new Date()
     }
@@ -27,21 +27,11 @@ const ChatInterface: React.FC = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
-  const eventSourceRef = useRef<EventSource | null>(null);
   
   // Auto-scroll to bottom of messages
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
-  
-  // Clean up EventSource on unmount
-  useEffect(() => {
-    return () => {
-      if (eventSourceRef.current) {
-        eventSourceRef.current.close();
-      }
-    };
-  }, []);
 
   const handleSendMessage = async (messageContent: string) => {
     // Add user message
@@ -56,59 +46,40 @@ const ChatInterface: React.FC = () => {
     setIsProcessing(true);
     
     try {
-      // Connect to the provided SSE URL with the message
-      const encodedMessage = encodeURIComponent(messageContent);
-      const url = `${sseUrl}?message=${encodedMessage}`;
+      const response = await fetch('http://localhost:5678/webhook-test/f69ee3da-efaa-4274-a8cc-ea16b1b5f41d', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: messageContent,
+          timestamp: new Date().toISOString(),
+          sender: 'user'
+        }),
+      });
       
-      // Close any existing connection
-      if (eventSourceRef.current) {
-        eventSourceRef.current.close();
+      if (response.ok) {
+        const data = await response.json();
+        const aiResponse: Message = {
+          id: (Date.now() + 1).toString(),
+          content: data.message || data.response || 'Message received',
+          sender: 'ai',
+          timestamp: new Date()
+        };
+        
+        setMessages(prev => [...prev, aiResponse]);
+      } else {
+        throw new Error('Failed to send message');
       }
-      
-      // Create new SSE connection
-      const eventSource = new EventSource(url);
-      eventSourceRef.current = eventSource;
-      
-      eventSource.onmessage = (event) => {
-        try {
-          const data = JSON.parse(event.data);
-          if (data.message) {
-            const aiResponse: Message = {
-              id: (Date.now() + 1).toString(),
-              content: data.message,
-              sender: 'ai',
-              timestamp: new Date()
-            };
-            
-            setMessages(prev => [...prev, aiResponse]);
-            setIsProcessing(false);
-            eventSource.close();
-            eventSourceRef.current = null;
-          }
-        } catch (error) {
-          console.error('Error parsing SSE message:', error);
-        }
-      };
-      
-      eventSource.onerror = () => {
-        // Handle error
-        toast({
-          title: "Error",
-          description: "Failed to connect to chatbot. Please try again.",
-          variant: "destructive"
-        });
-        setIsProcessing(false);
-        eventSource.close();
-        eventSourceRef.current = null;
-      };
       
     } catch (error) {
       console.error('Error sending message:', error);
       toast({
         title: "Error",
-        description: "Failed to send message. Please try again.",
+        description: "Failed to send message to webhook. Please check if n8n is running.",
         variant: "destructive"
       });
+    } finally {
       setIsProcessing(false);
     }
   };
@@ -116,7 +87,7 @@ const ChatInterface: React.FC = () => {
   const clearChat = () => {
     setMessages([{
       id: '1',
-      content: 'Hello, I am KM A.I. How can I assist you today?',
+      content: 'Hello, Mr Moloto! How can I assist you today?',
       sender: 'ai',
       timestamp: new Date()
     }]);

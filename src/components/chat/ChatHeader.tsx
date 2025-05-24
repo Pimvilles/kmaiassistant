@@ -28,8 +28,8 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({ onClearChat }) => {
       
       {/* Header Title */}
       <div className="text-2xl font-bold text-center">
-        <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500">
-          Hello, KM A.I
+        <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600">
+          Hello, Mr Moloto
         </span>
       </div>
       
