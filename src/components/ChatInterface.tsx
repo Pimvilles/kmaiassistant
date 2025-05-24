@@ -59,24 +59,64 @@ const ChatInterface: React.FC = () => {
       });
       
       if (response.ok) {
-        const data = await response.json();
+        console.log('Webhook response status:', response.status);
+        
+        // Get the response as text first
+        const responseText = await response.text();
+        console.log('Raw webhook response:', responseText);
+        
+        let responseContent = 'I received your message but could not generate a response.';
+        
+        // Try to parse as JSON first, if that fails, use as plain text
+        try {
+          const data = JSON.parse(responseText);
+          console.log('Parsed JSON response:', data);
+          
+          // Extract response from various possible JSON structures
+          if (data.response) {
+            responseContent = data.response;
+          } else if (data.message) {
+            responseContent = data.message;
+          } else if (data.reply) {
+            responseContent = data.reply;
+          } else if (data.text) {
+            responseContent = data.text;
+          } else if (typeof data === 'string') {
+            responseContent = data;
+          }
+        } catch (jsonError) {
+          // If JSON parsing fails, use the raw text as the response
+          console.log('Response is not JSON, using as plain text:', responseText);
+          if (responseText.trim()) {
+            responseContent = responseText.trim();
+          }
+        }
+        
         const aiResponse: Message = {
           id: (Date.now() + 1).toString(),
-          content: data.message || data.response || 'Message received',
+          content: responseContent,
           sender: 'ai',
           timestamp: new Date()
         };
         
         setMessages(prev => [...prev, aiResponse]);
       } else {
-        throw new Error('Failed to send message');
+        throw new Error(`Webhook responded with status: ${response.status}`);
       }
       
     } catch (error) {
       console.error('Error sending message:', error);
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        content: 'Sorry, I am currently unable to respond. Please check if the webhook service is running and properly configured for CORS.',
+        sender: 'ai',
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, errorMessage]);
+      
       toast({
-        title: "Error",
-        description: "Failed to send message to webhook. Please check if n8n is running.",
+        title: "Connection Error",
+        description: "Unable to connect to webhook. Check console for details.",
         variant: "destructive"
       });
     } finally {
