@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -31,24 +30,29 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isProcessing }) =>
     }
   };
 
-  const sendVoiceToWebhook = async (audioBlob: Blob) => {
+  const sendVoiceToMCP = async (audioBlob: Blob) => {
     try {
       const formData = new FormData();
       formData.append('voice_note', audioBlob, 'voice_note.wav');
       formData.append('timestamp', new Date().toISOString());
       formData.append('type', 'voice_note');
+      formData.append('context', JSON.stringify({
+        identity: 'Jarvus',
+        user: 'Mr Moloto',
+        personality: 'South African digital assistant with township flair'
+      }));
 
-      await fetch('http://localhost:5678/webhook-test/f69ee3da-efaa-4274-a8cc-ea16b1b5f41d', {
+      await fetch('https://mcp.zapier.com/api/mcp/s/MDBmNjI4M2YtOTJhNy00Yjg4LWEzMTUtYWEzZjg2YmQ3MDUyOjMxNThmZmQ3LWZlY2EtNGE5YS04MjkzLWU0N2YzOTQ5ZGZkYQ==/mcp', {
         method: 'POST',
         body: formData,
       });
 
       onSendMessage('🎤 Voice message sent');
     } catch (error) {
-      console.error('Error sending voice note:', error);
+      console.error('Error sending voice note to MCP:', error);
       toast({
         title: "Error",
-        description: "Failed to send voice note to webhook.",
+        description: "Failed to send voice note to MCP endpoint.",
         variant: "destructive"
       });
     }
@@ -71,8 +75,8 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isProcessing }) =>
         // Close all tracks of the stream
         stream.getTracks().forEach(track => track.stop());
         
-        // Send voice note to webhook
-        sendVoiceToWebhook(audioBlob);
+        // Send voice note to MCP
+        sendVoiceToMCP(audioBlob);
         
         toast({
           title: "Voice note recorded",

@@ -19,7 +19,7 @@ const ChatInterface: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      content: 'Hello, Mr Moloto! How can I assist you today?',
+      content: 'Yebo Mr Moloto! Jarvus here, ready to assist you today, Boss! What can I help you with?',
       sender: 'ai',
       timestamp: new Date()
     }
@@ -46,7 +46,7 @@ const ChatInterface: React.FC = () => {
     setIsProcessing(true);
     
     try {
-      const response = await fetch('http://localhost:5678/webhook-test/f69ee3da-efaa-4274-a8cc-ea16b1b5f41d', {
+      const response = await fetch('https://mcp.zapier.com/api/mcp/s/MDBmNjI4M2YtOTJhNy00Yjg4LWEzMTUtYWEzZjg2YmQ3MDUyOjMxNThmZmQ3LWZlY2EtNGE5YS04MjkzLWU0N2YzOTQ5ZGZkYQ==/mcp', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -54,18 +54,29 @@ const ChatInterface: React.FC = () => {
         body: JSON.stringify({
           message: messageContent,
           timestamp: new Date().toISOString(),
-          sender: 'user'
+          sender: 'user',
+          context: {
+            identity: 'Jarvus',
+            user: 'Mr Moloto',
+            personality: 'South African digital assistant with township flair',
+            date: new Date().toLocaleDateString('en-ZA', { 
+              weekday: 'long', 
+              year: 'numeric', 
+              month: 'long', 
+              day: 'numeric' 
+            })
+          }
         }),
       });
       
       if (response.ok) {
-        console.log('Webhook response status:', response.status);
+        console.log('MCP response status:', response.status);
         
         // Get the response as text first
         const responseText = await response.text();
-        console.log('Raw webhook response:', responseText);
+        console.log('Raw MCP response:', responseText);
         
-        let responseContent = 'I received your message but could not generate a response.';
+        let responseContent = 'Eish, Boss! I received your message but couldn\'t generate a proper response right now.';
         
         // Try to parse as JSON first, if that fails, use as plain text
         try {
@@ -81,6 +92,8 @@ const ChatInterface: React.FC = () => {
             responseContent = data.reply;
           } else if (data.text) {
             responseContent = data.text;
+          } else if (data.content) {
+            responseContent = data.content;
           } else if (typeof data === 'string') {
             responseContent = data;
           }
@@ -101,14 +114,14 @@ const ChatInterface: React.FC = () => {
         
         setMessages(prev => [...prev, aiResponse]);
       } else {
-        throw new Error(`Webhook responded with status: ${response.status}`);
+        throw new Error(`MCP endpoint responded with status: ${response.status}`);
       }
       
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error('Error sending message to MCP:', error);
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: 'Sorry, I am currently unable to respond. Please check if the webhook service is running and properly configured for CORS.',
+        content: 'Yho, Mr Moloto! Something went wrong on my side. The connection to my brain isn\'t working properly right now. Let me try to sort this out, Boss!',
         sender: 'ai',
         timestamp: new Date()
       };
@@ -116,7 +129,7 @@ const ChatInterface: React.FC = () => {
       
       toast({
         title: "Connection Error",
-        description: "Unable to connect to webhook. Check console for details.",
+        description: "Unable to connect to MCP endpoint. Check console for details.",
         variant: "destructive"
       });
     } finally {
@@ -127,7 +140,7 @@ const ChatInterface: React.FC = () => {
   const clearChat = () => {
     setMessages([{
       id: '1',
-      content: 'Hello, Mr Moloto! How can I assist you today?',
+      content: 'Yebo Mr Moloto! Jarvus here, ready to assist you today, Boss! What can I help you with?',
       sender: 'ai',
       timestamp: new Date()
     }]);
