@@ -4,16 +4,7 @@ import * as TooltipPrimitive from "@radix-ui/react-tooltip"
 
 import { cn } from "@/lib/utils"
 
-// Remove forwardRef: TooltipPrimitive.Provider does NOT accept ref.
-const TooltipProvider: React.FC<React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Provider>> = ({
-  children,
-  ...props
-}) => (
-  <TooltipPrimitive.Provider {...props}>
-    {children}
-  </TooltipPrimitive.Provider>
-);
-
+const TooltipProvider = TooltipPrimitive.Provider;
 const Tooltip = TooltipPrimitive.Root;
 const TooltipTrigger = TooltipPrimitive.Trigger;
 
