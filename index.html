@@ -27,33 +27,6 @@
 
   <body>
     <div id="root"></div>
-    
-    <!-- Vapi SDK Script -->
-    <script>
-      var vapiInstance = null;
-      const assistant = "d4502cc8-a7ab-4799-884d-cd5a29fd5ca3";
-      const apiKey = "b0db1376-81d3-4b45-946a-7a79c57aa6d1";
-      const buttonConfig = {}; // Modify this as required
-
-      (function (d, t) {
-        var g = document.createElement(t),
-          s = d.getElementsByTagName(t)[0];
-        g.src =
-          "https://cdn.jsdelivr.net/gh/VapiAI/html-script-tag@latest/dist/assets/index.js";
-        g.defer = true;
-        g.async = true;
-        s.parentNode.insertBefore(g, s);
-
-        g.onload = function () {
-          vapiInstance = window.vapiSDK.run({
-            apiKey: apiKey,
-            assistant: assistant,
-            config: buttonConfig, // optional
-          });
-        };
-      })(document, "script");
-    </script>
-    
     <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script type="module" src="/src/main.tsx"></script>

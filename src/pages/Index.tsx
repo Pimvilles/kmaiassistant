@@ -2,7 +2,7 @@
 import React from 'react';
 import MatrixRain from '../components/MatrixRain';
 import LogoContainer from '../components/LogoContainer';
-import { useVapi } from '../contexts/VapiContext';
+import CallButton from '../components/CallButton';
 
 const Index = () => {
   // Using the uploaded image for the logo
@@ -21,7 +21,8 @@ const Index = () => {
           </h1>
         </div>
         
-        <LogoContainer imageSrc={logoUrl} className="w-64 h-64 md:w-80 md:h-80" />
+        <LogoContainer imageSrc={logoUrl} />
+        <CallButton />
       </main>
       
       {/* Footer */}

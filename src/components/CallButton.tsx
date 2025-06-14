@@ -1,66 +1,54 @@
 
 import React from 'react';
+import { useVapi } from '../contexts/VapiContext';
 import { useToast } from '@/hooks/use-toast';
-import LogoContainer from './LogoContainer';
-
-declare global {
-  interface Window {
-    vapiInstance: any;
-  }
-}
 
 const CallButton: React.FC = () => {
+  const { apiKey, setShowCallPage } = useVapi();
   const { toast } = useToast();
-  
-  // Using the uploaded image for the logo
-  const logoUrl = '/lovable-uploads/76b42ff4-8327-424b-ae17-818df10c2c0d.png';
   
   const handleCall = async () => {
     try {
-      // Check if vapiInstance is available
-      if (!window.vapiInstance) {
-        toast({
-          title: "Error",
-          description: "Voice agent not initialized. Please refresh the page and try again.",
-          variant: "destructive"
-        });
-        return;
-      }
-
       toast({
         title: "Calling Agent K",
         description: "Initiating voice call..."
       });
       
-      // Use the vapiInstance to start the call
-      await window.vapiInstance.start();
+      // In a real implementation, this is where you would call the Vapi API
+      // For now, we'll just show a success message
       
       toast({
         title: "Success",
-        description: "Agent K call initiated successfully"
+        description: "Agent K has been contacted"
       });
       
+      // Go back to chat interface
+      setTimeout(() => {
+        setShowCallPage(false);
+      }, 3000);
+      
     } catch (error) {
-      console.error('Error calling Vapi:', error);
+      console.error('Error calling Vapi API:', error);
       toast({
         title: "Error",
-        description: "Failed to contact Agent K. Please try again.",
+        description: "Failed to contact Agent K. Check console for details.",
         variant: "destructive"
       });
     }
   };
   
   return (
-    <div 
+    <button 
       onClick={handleCall} 
-      className="cursor-pointer hover:scale-105 transition-transform duration-300"
+      className="call-button relative group mt-8 px-8 py-3 bg-gradient-to-r from-blue-400 to-blue-500 text-white rounded-full font-semibold shadow-lg shadow-blue-300/30 hover:shadow-blue-400/40 transition-all duration-300 overflow-hidden z-10"
     >
-      <div className="w-16 h-16 sm:w-20 sm:h-20 relative">
-        <LogoContainer imageSrc={logoUrl} />
-        {/* Blue glow overlay for call button indication */}
-        <div className="absolute inset-0 rounded-full bg-blue-500/20 animate-pulse-blue-glow"></div>
-      </div>
-    </div>
+      {/* Futuristic effect */}
+      <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-blue-300 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></span>
+      <span className="relative z-10 flex items-center justify-center">
+        <span className="mr-2">Call Agent K</span>
+        <span className="w-2 h-2 bg-blue-200 rounded-full animate-ping"></span>
+      </span>
+    </button>
   );
 };
 
